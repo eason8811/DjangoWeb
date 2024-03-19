@@ -19,5 +19,5 @@ from django.urls import path
 from Emotional_Analysis import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', views.hello_world),
 ]
