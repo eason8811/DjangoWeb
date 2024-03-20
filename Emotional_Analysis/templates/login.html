@@ -6,6 +6,14 @@
     <link rel="stylesheet" href="/static/css/layui.css">
 </head>
 <style>
+    body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('../static/img/img.png');
+            background-size: cover;
+            background-repeat: no-repeat; /* 禁止背景图片重复显示 */
+    }
+
     .demo-login-container {
         width: 320px;
         margin: 21px auto 0;
@@ -19,7 +27,7 @@
         font-size: 26px;
     }
 </style>
-<body background="../static/img/img.png" style="background-size: 1488px 987px">
+<body>
 
 
 <form class="layui-form">
@@ -55,8 +63,7 @@
                 </div>
                 <div class="layui-col-xs5">
                     <div style="margin-left: 10px;">
-                        <img src="https://www.oschina.net/action/user/captcha"
-                             id = "captchaImage">
+                        <img src="https://www.oschina.net/action/user/captcha" id = "captchaImage">
                     </div>
                 </div>
             </div>

@@ -20,4 +20,6 @@ from Emotional_Analysis import views
 
 urlpatterns = [
     path('', views.hello_world),
+    path('login/', views.login),
+    path('get_captcha/', views.get_captcha),
 ]
