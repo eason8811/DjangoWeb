@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="DjangoWeb" uuid="eccf6580-453a-4f3a-b71e-414990ad9755">
+    <data-source source="LOCAL" name="DjangoWeb" uuid="e7bf72a4-b224-4bcb-837d-c74fb85319be">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>

@@ -15,13 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from Emotional_Analysis import views
 
 urlpatterns = [
-    path('', views.hello_world),
-    path("login/", views.login),  # 登录
-    path("get_valid_img/", views.get_valid_img),  # 生成验证码
-    path("reg/", views.reg)  # 注册
+    path('', views.start),
+    path('index/', views.index),
+    path('login/', views.login),
+    path('register/', views.register),
+    path('logout/', views.logout),
+    path('captcha/', include('captcha.urls')),
 
 ]
