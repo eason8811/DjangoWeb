@@ -20,6 +20,8 @@ from Emotional_Analysis import views
 
 urlpatterns = [
     path('', views.hello_world),
-    path('login/', views.login),
-    path('get_captcha/', views.get_captcha),
+    path("login/", views.login),  # 登录
+    path("get_valid_img/", views.get_valid_img),  # 生成验证码
+    path("reg/", views.reg)  # 注册
+
 ]
