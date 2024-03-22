@@ -152,16 +152,16 @@ def all_information(request):
 
 def all_comment(request):
     print(reverse('all_comment'))
-    return render('graphic/all_comment.html')
+    return render(request, 'graphic/all_comment.html')
 
 
 def kline(request):
     global code
-    return render(f'graphic/kline_{code}.html')
+    return render(request, f'graphic/kline_{code}.html')
 
 
 def get_last_day():
-    data = pd.read_csv("./output/rating.csv", index_col=0)
+    data = pd.read_csv("Emotional_Analysis/output/rating.csv", index_col=0)
     data = data.sort_values(by=["date"], ascending=False)
     return data.iloc[0, 0]
 
@@ -169,8 +169,8 @@ def get_last_day():
 def main_wordcloud(request):
     # today = time.strftime("%m-%d", time.localtime())
     today = get_last_day()
-    return render(f'graphic/wordcloud/wordcloud_{today}.html')
+    return render(request, f'graphic/wordcloud/wordcloud_{today}.html')
 
 
 def main_pie(request):
-    return render(f'graphic/pie_.html')
+    return render(request, f'graphic/pie_.html')

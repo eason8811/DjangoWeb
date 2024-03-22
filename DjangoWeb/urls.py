@@ -29,8 +29,8 @@ urlpatterns = [
     path('captcha/', include('captcha.urls')),
     # 主页
     path('main_page/', views.main_page),
-    path('all_comment/', views.all_comment),
-    path('kline/', views.kline),
-    path('main_wordcloud/', views.main_wordcloud),
-    path('main_pie/', views.main_pie),
+    path('all_comment/', views.all_comment, name='all_comment'),
+    path('kline/', views.kline, name='kline'),
+    path('main_wordcloud/', views.main_wordcloud, name='main_wordcloud'),
+    path('main_pie/', views.main_pie, name='main_pie'),
 ]
