@@ -149,12 +149,12 @@
         <div class="box">
             <iframe class="graph" id="all_comment" width="800px" height="400px" frameborder="no" marginwidth="0"
                     marginheight="0" scrolling="no" allowtransparency="yes"
-                    src="{{ url_for('all_comment') }}"></iframe>
+                    src="{% url all_comment %}"></iframe>
         </div>
         <div class="box">
             <iframe class="graph" id="kline" width="800px" height="400px" frameborder="no" marginwidth="0"
                     marginheight="0" scrolling="no" allowtransparency="yes"
-                    src="{{ url_for('kline') }}"></iframe>
+                    src="{% url kline %}"></iframe>
         </div>
     </div>
     <div class="right">
@@ -181,13 +181,13 @@
         <div class="box">
             <iframe class="graph" id="all_comment" width="400px" height="200px" frameborder="no" marginwidth="0"
                     marginheight="0" scrolling="no" allowtransparency="yes"
-                    src="{{ url_for('main_wordcloud') }}"></iframe>
+                    src="{% url main_wordcloud %}"></iframe>
         </div>
 
         <div class="box">
             <iframe class="graph" id="all_comment" width="400px" height="400px" frameborder="no" marginwidth="0"
                     marginheight="0" scrolling="no" allowtransparency="yes"
-                    src="{{ url_for('main_pie') }}"></iframe>
+                    src="{% url main_pie %}"></iframe>
         </div>
 
         <script>

@@ -20,10 +20,17 @@ from Emotional_Analysis import views
 
 urlpatterns = [
     path('', views.start),
+    # 主界面
     path('index/', views.index),
+    # 登录注册以及验证码
     path('login/', views.login),
     path('register/', views.register),
     path('logout/', views.logout),
     path('captcha/', include('captcha.urls')),
-
+    # 主页
+    path('main_page/', views.main_page),
+    path('all_comment/', views.all_comment),
+    path('kline/', views.kline),
+    path('main_wordcloud/', views.main_wordcloud),
+    path('main_pie/', views.main_pie),
 ]

@@ -1,15 +1,13 @@
-import random
-import re
-from io import BytesIO
-
-from PIL import Image, ImageDraw, ImageFont
-from django import forms
-from django.shortcuts import render, redirect
-from .models import User
-from .forms import UserForm, RegisterForm
 import hashlib
-import datetime
-from django.conf import settings
+
+import pandas as pd
+from django.shortcuts import render, redirect
+from django.urls import reverse
+
+from .forms import UserForm, RegisterForm
+from .models import User, Comment
+
+code = 300059
 
 
 def start(request):
@@ -110,3 +108,69 @@ def logout(request):
     # del request.session['user_id']
     # del request.session['user_name']
     return redirect("/login/")
+
+
+# ====================================================================
+def main_page(request):
+    global code
+    data = pd.read_csv(f"Emotional_Analysis/output/data_{code}.csv", index_col=0)
+    data = data.sort_values(by=["comment_date"])
+    last_comment_text = data.iloc[-1, 0]
+    last_comment_date = data.iloc[-1, 1]
+    return render(request, 'main_page.html',
+                  {'last_comment_text': last_comment_text,
+                   'last_comment_date': last_comment_date})
+
+
+def all_information(request):
+    page = request.GET.get('page', type=int, default=1)
+    per_page = request.GET.get('limit', type=int, default=10)
+    start = (page - 1) * per_page
+    end = start + per_page
+    comment_text = request.GET.get('comment_text')
+    if comment_text is None:
+        raw_sql = "select comment_text,comment_date from comment"
+        comment_rows = Comment.objects.raw(raw_sql)
+    else:
+        raw_sql = f"select comment_text,comment_date from comment where comment_text like %s"
+        comment_rows = Comment.objects.raw(raw_sql, ['%' + comment_text + '%'])
+    rets = comment_rows
+    count = len(rets)
+    rets = rets[start:end]
+    return {
+        'code': 0,
+        'msg': '信息查询成功',
+        'count': count,
+        'data': [
+            {
+                'comment_text': ret[0],
+                'create_at': ret[1]
+            } for ret in rets
+        ]
+    }
+
+
+def all_comment(request):
+    print(reverse('all_comment'))
+    return render('graphic/all_comment.html')
+
+
+def kline(request):
+    global code
+    return render(f'graphic/kline_{code}.html')
+
+
+def get_last_day():
+    data = pd.read_csv("./output/rating.csv", index_col=0)
+    data = data.sort_values(by=["date"], ascending=False)
+    return data.iloc[0, 0]
+
+
+def main_wordcloud(request):
+    # today = time.strftime("%m-%d", time.localtime())
+    today = get_last_day()
+    return render(f'graphic/wordcloud/wordcloud_{today}.html')
+
+
+def main_pie(request):
+    return render(f'graphic/pie_.html')

@@ -13,4 +13,9 @@ class User(models.Model):
         return self.name
 
 
+class Comment(models.Model):
+    comment_num = models.CharField(max_length=20, primary_key=True, blank=False, null=False)
+    comment_text = models.CharField(max_length=300, blank=False, null=False)
+    comment_date = models.CharField(max_length=50, default=None)
+    comment_time = models.CharField(max_length=50, default=None)
 
