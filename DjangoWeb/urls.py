@@ -33,4 +33,6 @@ urlpatterns = [
     path('kline/', views.kline, name='kline'),
     path('main_wordcloud/', views.main_wordcloud, name='main_wordcloud'),
     path('main_pie/', views.main_pie, name='main_pie'),
+    path('receive_code/', views.handle_data),
+    path('progress/', views.progress),
 ]

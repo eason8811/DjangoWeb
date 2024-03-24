@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os.path
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-7b#318@3wftzvqqm$38l9)f@^xi%#2(kx7zrs0u(ry8!4%&(q8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
+X_FRAME_OPTIONS = 'ALLOWALL'
 
 # Application definition
 
@@ -56,7 +56,9 @@ ROOT_URLCONF = 'DjangoWeb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': []
+        'DIRS': [os.path.join(BASE_DIR, 'Emotional_Analysis/templates'),
+                 os.path.join(BASE_DIR, 'Emotional_Analysis/templates/graphic'),
+                 os.path.join(BASE_DIR, 'Emotional_Analysis/templates/graphic/wordcloud'),]
         ,
         'APP_DIRS': True,
         'OPTIONS': {

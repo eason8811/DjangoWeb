@@ -1,11 +1,18 @@
 import hashlib
-
+import datetime
 import pandas as pd
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.urls import reverse
+from django.http import JsonResponse
 
 from .forms import UserForm, RegisterForm
 from .models import User, Comment
+from .tools.fig_wordCloud import fig_wordcloud
+from .tools.match import match_words
+from .tools.grab import grab_data
+from .tools.fig_out import fig_output_html, fig_pie, fig_kline, fig_calendar, liquid
+from tqdm import tqdm
+import time
 
 code = 300059
 
@@ -169,8 +176,88 @@ def get_last_day():
 def main_wordcloud(request):
     # today = time.strftime("%m-%d", time.localtime())
     today = get_last_day()
-    return render(request, f'graphic/wordcloud/wordcloud_{today}.html')
+    return render(request, f'wordcloud/wordcloud_{today}.html')
 
 
 def main_pie(request):
     return render(request, f'graphic/pie_.html')
+
+
+total = 100  # 总任务数
+current_statue = 0
+tasks = range(total)
+pbar = tqdm(total=len(tasks))
+status = ''
+
+
+def handle_data(request):
+    global status, code, current_statue
+    if request.method == 'POST':
+        pbar.reset()
+        # data = request.json
+        data = request.POST
+        code = data['input_code']
+        last_day = data['last_day']
+        print(data)
+        last_day_ = datetime.datetime.strptime(last_day, "%Y-%m-%dT%H:%M")
+        day = last_day_.strftime("%m-%d")
+        pbar.update(10)  # 10%
+        current_statue = 10
+        status = '初始化'
+        # 爬取数据
+        status = '爬取数据'
+        grab_data(code=code, day=day)
+        pbar.update(20)  # 30%
+        current_statue = 30
+        # 文本分析
+        status = '文本分析'
+        match_words(code)
+        pbar.update(20)  # 50%
+        current_statue = 50
+        # 作图
+        status = '作图'
+        fig_output_html()
+        liquid()
+        fig_kline(code, day)
+        fig_wordcloud(code)
+        fig_pie()
+        fig_calendar()
+        pbar.update(10)  # 60%
+        current_statue = 60
+        # 导入数据库
+        status = '导入数据库'
+        # db.load_csv(f"./output/data_{code}.csv")
+        data_csv = pd.read_csv(f"Emotional_Analysis/output/data_{code}.csv", index_col=0)
+        for i in tqdm(range(len(data_csv))):
+            list = []
+            list.append(str(i))
+            for j in range(3):
+                list.append(str(data_csv.iloc[i, j]))
+            Comment.objects.create(comment_text=list[1], comment_date=list[2], comment_time=list[3])
+            print(f'到这里{i}')
+            print(list)
+            pbar.update(round(40 / len(data_csv), 3))
+            current_statue = 60 + i * 40 / len(data_csv)
+        pbar.update(1)  # 100%
+        current_statue = 100
+        status = '爬取完成'
+        time.sleep(1)
+        current_statue = 101
+
+        pbar.refresh()
+        return HttpResponse('股票代码收到')
+
+
+def progress(resquest):
+    """查看进度"""
+    global status, code, current_statue, pbar
+    response_data = {
+        'status': status,
+        'n': current_statue,
+        'total': pbar.total
+    }
+    response = JsonResponse(response_data)
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Access-Control-Allow-Headers'] = '*'
+    response['Access-Control-Allow-Methods'] = '*'
+    return response
