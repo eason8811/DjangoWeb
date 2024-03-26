@@ -35,4 +35,12 @@ urlpatterns = [
     path('main_pie/', views.main_pie, name='main_pie'),
     path('receive_code/', views.handle_data),
     path('progress/', views.progress),
+
+    path('page_all/', views.page_all),
+    path('daily_comment_line/', views.daily_comment_line, name='daily_comment_line'),
+    path('daily_horizon/', views.daily_horizon, name='daily_horizon'),
+    path('calendar/', views.calendar, name='calendar'),
+    path('page_search/', views.page_search, name='page_search'),
+
+    path('api/search/', views.api_search),
 ]

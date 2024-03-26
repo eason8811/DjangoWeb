@@ -136,10 +136,10 @@ def all_information(request):
     end = start + per_page
     comment_text = request.GET.get('comment_text')
     if comment_text is None:
-        raw_sql = "select comment_text,comment_date from comment"
+        raw_sql = "select comment_text,comment_date from emotional_analysis_comment"
         comment_rows = Comment.objects.raw(raw_sql)
     else:
-        raw_sql = f"select comment_text,comment_date from comment where comment_text like %s"
+        raw_sql = f"select comment_text,comment_date from emotional_analysis_comment where comment_text like %s"
         comment_rows = Comment.objects.raw(raw_sql, ['%' + comment_text + '%'])
     rets = comment_rows
     count = len(rets)
@@ -261,3 +261,55 @@ def progress(resquest):
     response['Access-Control-Allow-Headers'] = '*'
     response['Access-Control-Allow-Methods'] = '*'
     return response
+
+
+def page_all(request):
+    data = pd.read_csv(f'Emotional_Analysis/output/data_{code}.csv', index_col=0)
+    data = data.sort_values(by=["comment_date"], ascending=False)
+    data = data.iloc[0:100, 0:2]
+    comments = data.to_dict('records')
+    return render(request, 'page_all.html',
+                  {'code': code, 'comments': comments})
+
+
+def daily_comment_line(request):
+    return render(request, 'daily_comment_line.html')
+
+
+def daily_horizon(request):
+    return render(request, 'daily_horizon.html')
+
+
+def calendar(request):
+    return render(request, 'calendar.html')
+
+
+def page_search(request):
+    return render(request, 'page_search.html')
+
+
+def api_search(request):
+    page = 1 if request.GET.get('page') is None else int(request.GET.get('page'))
+    per_page = 10 if request.GET.get('limit') is None else int(request.GET.get('limit'))
+    start = (page - 1) * per_page
+    end = start + per_page
+    comment_text = request.GET.get('comment_text')
+    if comment_text is None:
+        rets = Comment.objects.raw("select comment_num, comment_text, comment_date from emotional_analysis_comment")
+    else:
+        rets = Comment.objects.raw("select comment_num, comment_text, comment_date "
+                                   "from emotional_analysis_comment where comment_text like %s",
+                                   ['%' + comment_text + '%',])
+    count = len(rets)
+    rets = rets[start:end]
+    return JsonResponse({
+        'code': 0,
+        'msg': '信息查询成功',
+        'count': count,
+        'data': [
+            {
+                'comment_text': ret.comment_text,
+                'create_at': ret.comment_date
+            } for ret in rets
+        ]
+    })

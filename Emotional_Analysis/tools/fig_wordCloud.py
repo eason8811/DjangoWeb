@@ -46,7 +46,7 @@ def fig_wordcloud(code):
             .set_global_opts(
                 title_opts=opts.TitleOpts(title="热词", title_textstyle_opts=opts.TextStyleOpts(font_size=23)),
                 tooltip_opts=opts.TooltipOpts(is_show=True), )
-            .render(f"wordcloud_{date_time}.html")
+            .render(f"Emotional_Analysis/templates/graphic/wordcloud/wordcloud_{date_time}.html")
         )
         print(f'生成词云 {date_time}')
 
