@@ -14,6 +14,12 @@ from .tools.fig_out import fig_output_html, fig_pie, fig_kline, fig_calendar, li
 from tqdm import tqdm
 import time
 
+from pycallgraph import Config
+from pycallgraph import PyCallGraph
+from pycallgraph.output import GraphvizOutput
+import os
+os.environ["PATH"] += os.pathsep + r'E:\graphviz\bin/'
+
 code = 300059
 
 
@@ -192,60 +198,65 @@ status = ''
 
 def handle_data(request):
     global status, code, current_statue
-    if request.method == 'POST':
-        pbar.reset()
-        # data = request.json
-        data = request.POST
-        code = data['input_code']
-        last_day = data['last_day']
-        print(data)
-        last_day_ = datetime.datetime.strptime(last_day, "%Y-%m-%dT%H:%M")
-        day = last_day_.strftime("%m-%d")
-        pbar.update(10)  # 10%
-        current_statue = 10
-        status = '初始化'
-        # 爬取数据
-        status = '爬取数据'
-        grab_data(code=code, day=day)
-        pbar.update(20)  # 30%
-        current_statue = 30
-        # 文本分析
-        status = '文本分析'
-        match_words(code)
-        pbar.update(20)  # 50%
-        current_statue = 50
-        # 作图
-        status = '作图'
-        fig_output_html()
-        liquid()
-        fig_kline(code, day)
-        fig_wordcloud(code)
-        fig_pie()
-        fig_calendar()
-        pbar.update(10)  # 60%
-        current_statue = 60
-        # 导入数据库
-        status = '导入数据库'
-        # db.load_csv(f"./output/data_{code}.csv")
-        data_csv = pd.read_csv(f"Emotional_Analysis/output/data_{code}.csv", index_col=0)
-        for i in tqdm(range(len(data_csv))):
-            list = []
-            list.append(str(i))
-            for j in range(3):
-                list.append(str(data_csv.iloc[i, j]))
-            Comment.objects.create(comment_text=list[1], comment_date=list[2], comment_time=list[3])
-            print(f'到这里{i}')
-            print(list)
-            pbar.update(round(40 / len(data_csv), 3))
-            current_statue = 60 + i * 40 / len(data_csv)
-        pbar.update(1)  # 100%
-        current_statue = 100
-        status = '爬取完成'
-        time.sleep(1)
-        current_statue = 101
+    config = Config()
+    graphviz = GraphvizOutput()
+    graphviz.output_file = 'Emotional_Analysis/static/img/graph.png'
 
-        pbar.refresh()
-        return HttpResponse('股票代码收到')
+    with PyCallGraph(output=graphviz, config=config):
+        if request.method == 'POST':
+            pbar.reset()
+            # data = request.json
+            data = request.POST
+            code = data['input_code']
+            last_day = data['last_day']
+            print(data)
+            last_day_ = datetime.datetime.strptime(last_day, "%Y-%m-%dT%H:%M")
+            day = last_day_.strftime("%m-%d")
+            pbar.update(10)  # 10%
+            current_statue = 10
+            status = '初始化'
+            # 爬取数据
+            status = '爬取数据'
+            grab_data(code=code, day=day)
+            pbar.update(20)  # 30%
+            current_statue = 30
+            # 文本分析
+            status = '文本分析'
+            match_words(code)
+            pbar.update(20)  # 50%
+            current_statue = 50
+            # 作图
+            status = '作图'
+            fig_output_html()
+            liquid()
+            fig_kline(code, day)
+            fig_wordcloud(code)
+            fig_pie()
+            fig_calendar()
+            pbar.update(10)  # 60%
+            current_statue = 60
+            # 导入数据库
+            status = '导入数据库'
+            # db.load_csv(f"./output/data_{code}.csv")
+            data_csv = pd.read_csv(f"Emotional_Analysis/output/data_{code}.csv", index_col=0)
+            for i in tqdm(range(len(data_csv))):
+                list = []
+                list.append(str(i))
+                for j in range(3):
+                    list.append(str(data_csv.iloc[i, j]))
+                Comment.objects.create(comment_text=list[1], comment_date=list[2], comment_time=list[3])
+                print(f'到这里{i}')
+                print(list)
+                pbar.update(round(40 / len(data_csv), 3))
+                current_statue = 60 + i * 40 / len(data_csv)
+            pbar.update(1)  # 100%
+            current_statue = 100
+            status = '爬取完成'
+            time.sleep(1)
+            current_statue = 101
+
+            pbar.refresh()
+            return HttpResponse('股票代码收到')
 
 
 def progress(resquest):

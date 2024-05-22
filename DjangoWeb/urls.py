@@ -19,6 +19,7 @@ from django.urls import path,include
 from Emotional_Analysis import views
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', views.start),
     # 主界面
     path('index/', views.index),
